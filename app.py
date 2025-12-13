@@ -55,5 +55,5 @@ def ask():
         "promotions": find_promotions(user_query)
     })
 
-if __name__ == "__main__":
+if __name__ == "__app__":
     app.run(host="0.0.0.0", port=3000)

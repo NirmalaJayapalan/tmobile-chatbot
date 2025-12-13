@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>T-Mobile Chatbot</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #chatbox { width: 100%; height: 450px; border: 1px solid #ccc; overflow-y: scroll; padding: 10px; background-color: #f9f9f9; }
+        input { width: 75%; padding: 10px; margin-top: 10px; }
+        button { padding: 10px; margin-top: 10px; }
+        .user { color: blue; }
+        .bot { color: green; }
+        .message { margin-bottom: 10px; }
+        .section { margin-left: 15px; }
+    </style>
+</head>
+<body>
+    <h2>T-Mobile Chatbot</h2>
+    <div id="chatbox"></div>
+    <input type="text" id="query" placeholder="Ask me about devices, plans, promotions, or services">
+    <button onclick="sendQuery()">Send</button>
+
+    <script>
+        function addMessage(sender, text) {
+            const chatbox = document.getElementById("chatbox");
+            const div = document.createElement("div");
+            div.className = "message " + sender;
+            div.innerHTML = `<b>${sender}:</b> ${text}`;
+            chatbox.appendChild(div);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        function sendQuery() {
+            const input = document.getElementById("query");
+            const query = input.value.trim();
+            if (!query) return;
+            addMessage("User", query);
+            input.value = "";
+
+            fetch("/ask", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({query: query})
+            })
+            .then(res => res.json())
+            .then(data => {
+                let response = "";
+
+                if (data.devices && data.devices.length > 0) {
+                    response += "<b>Devices:</b><br>";
+                    data.devices.forEach(d => {
+                        response += `<div class="section">${d.model} - $${d.price} (${d.type})</div>`;
+                    });
+                }
+
+                if (data.plans && data.plans.length > 0) {
+                    response += "<b>Plans:</b><br>";
+                    data.plans.forEach(p => {
+                        response += `<div class="section">${p.name} - $${p.price_per_month}/month, ${p.lines} line(s), Features: ${p.features.join(", ")}</div>`;
+                    });
+                }
+
+                if (data.promotions && data.promotions.length > 0) {
+                    response += "<b>Promotions:</b><br>";
+                    data.promotions.forEach(p => {
+                        response += `<div class="section">${p.description}</div>`;
+                    });
+                }
+
+                if (data.services && data.services.length > 0) {
+                    response += "<b>Services:</b><br>";
+                    data.services.forEach(s => {
+                        response += `<div class="section">${s.name} - $${s.price_per_month}/month, ${s.description}</div>`;
+                    });
+                }
+
+                if (!response) response = "Sorry, no matching results found.";
+                addMessage("Bot", response);
+            })
+            .catch(err => {
+                addMessage("Bot", "Error contacting the server.");
+                console.error(err);
+            });
+        }
+    </script>
+</body>
+</html>
+

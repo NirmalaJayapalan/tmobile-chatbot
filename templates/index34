@@ -16,12 +16,10 @@
         }
 
         .chat-container {
-            width: 600px;         /* tablet-like width */
-            max-width: 90%;
-            height: 700px;        /* taller container */
+            width: 420px;
             background-color: #ffffff;
-            border-radius: 15px;
-            box-shadow: 0px 6px 25px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
             margin-top: 20px;
             display: flex;
             flex-direction: column;
@@ -31,30 +29,30 @@
             background-color: #e20074; 
             color: white;
             padding: 12px;
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
             display: flex;
             align-items: center;
         }
         .chat-header img {
-            height: 35px;
+            height: 30px;
             margin-right: 10px;
         }
         .chat-header h2 {
             margin: 0;
-            font-size: 20px;
+            font-size: 18px;
         }
 
         #chatbox {
             flex: 1;
-            padding: 20px;
+            padding: 15px;
             overflow-y: auto;
-            font-size: 16px;
+            max-height: 400px;
         }
 
         .message {
             margin-bottom: 10px;
-            padding: 10px 15px;
+            padding: 8px 12px;
             border-radius: 15px;
             max-width: 80%;
             word-wrap: break-word;
@@ -84,39 +82,28 @@
             padding: 10px;
             border-top: 1px solid #ddd;
             background-color: #fafafa;
-            border-bottom-left-radius: 15px;
-            border-bottom-right-radius: 15px;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
         }
         .chat-input input {
             flex: 1;
-            padding: 12px;
+            padding: 10px;
             border-radius: 20px;
             border: 1px solid #ddd;
             outline: none;
-            font-size: 16px;
         }
         .chat-input button {
+            background-color: #e20074;
+            color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 10px 15px;
             margin-left: 8px;
             border-radius: 20px;
             cursor: pointer;
-            font-size: 16px;
             transition: background 0.2s ease;
         }
-        .chat-input button.send-btn {
-            background-color: #e20074;
-            color: white;
-        }
-        .chat-input button.send-btn:hover {
+        .chat-input button:hover {
             background-color: #c50066;
-        }
-        .chat-input button.clear-btn {
-            background-color: #ff4081;
-            color: white;
-        }
-        .chat-input button.clear-btn:hover {
-            background-color: #e60070;
         }
 
     </style>
@@ -132,8 +119,7 @@
 
         <div class="chat-input">
             <input type="text" id="query" placeholder="Ask me about devices, plans, promotions..." />
-            <button class="send-btn" onclick="sendQuery()">Send</button>
-            <button class="clear-btn" onclick="clearChat()">Clear</button>
+            <button onclick="sendQuery()">Send</button>
         </div>
     </div>
 
@@ -142,7 +128,7 @@
             const chatbox = document.getElementById("chatbox");
             const div = document.createElement("div");
             div.className = "message " + sender;
-            if(category) div.classList.add(category);
+            if(category) div.classList.add(category); // add category class for coloring
             div.innerHTML = text;
             chatbox.appendChild(div);
             chatbox.scrollTop = chatbox.scrollHeight;
@@ -206,7 +192,6 @@
                     addMessage("bot", msg, "services");
                 }
 
-                // No results
                 if ((!data.devices || data.devices.length === 0) &&
                     (!data.plans || data.plans.length === 0) &&
                     (!data.promotions || data.promotions.length === 0) &&
@@ -218,11 +203,6 @@
                 addMessage("bot", "Oops! Something went wrong. Please try again.");
                 console.error(err);
             });
-        }
-
-        function clearChat() {
-            const chatbox = document.getElementById("chatbox");
-            chatbox.innerHTML = "";
         }
     </script>
 </body>

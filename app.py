@@ -42,9 +42,10 @@ def find_promotions(query):
     query_lower = query.lower()
     return [promo for promo in telecom_data["promotions"] if any(word in promo["description"].lower() for word in query_lower.split())]
 
+# Correct route to serve your HTML
 @app.route("/")
 def index():
-    return "Your chatbot app is running!"
+    return render_template("index.html")  # ✅ Load your chatbot UI
 
 @app.route("/ask", methods=["POST"])
 def ask():
@@ -57,4 +58,3 @@ def ask():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000)
-
